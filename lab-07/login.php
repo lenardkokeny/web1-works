@@ -1,17 +1,23 @@
 <?php
+ 
 
     require_once('config.php');
 
     if(isset($_POST['email']) && isset($_POST['password']))
     {
-        $conn = new PDO('mysql:host=localhost;dbname='.DB_NAME.';charset=utf8', DB_NAME, DB_PASS);
+        $conn = get_connection();
 
         $sql= "SELECT * FROM manfred.users
         WHERE email = '{$_POST['email']}' AND password = SHA1('{$_POST['password']}')";
 
         $res=$conn->query($sql);
         $records=$res->fetchAll(PDO::FETCH_ASSOC);
-        var_dump($records);
+        
+        if(count($records) === 1){
+            $_SESSION['isloggedin'] = true;
+            $_SESSION['name'] = $records[0]['name'];
+            $_SESSION['email'] = $records[0]['email'];
+        }
     }
 ?>
 
